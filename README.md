@@ -10,6 +10,7 @@ CloudAK will install below tools.
 ## Azure / Azure AD / M365
 * AADInternals
 * O365creeper
+* MicroBurst
 
 ## Misc
 * Python 3.11

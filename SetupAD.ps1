@@ -1,7 +1,18 @@
 function Install-AADInternals {
-	Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 	Install-Module AADInternals -Scope CurrentUser -RequiredVersion 0.7.8
-	Set-PSRepository -Name PSGallery -InstallationPolicy Untrusted
+}
+
+function Install-MicroBurst {
+	Invoke-WebRequest https://github.com/NetSPI/MicroBurst/archive/refs/heads/master.zip -OutFile temp\MicroBurst-master.zip
+	Expand-Archive temp\MicroBurst-master.zip -DestinationPath C:\Tools\Azure
+	Move-Item C:\Tools\Azure\MicroBurst-master C:\Tools\Azure\MicroBurst
+
+	Install-Module Az -Scope CurrentUser -RequiredVersion 9.1.1
+	Install-Module AzureAD -Scope CurrentUser -RequiredVersion 2.0.2.140
+	Install-Module AzureRM -Scope CurrentUser -RequiredVersion 6.13.2
+	Install-Module MSOnline -Scope CurrentUser -RequiredVersion 1.1.183.66
+
+	Import-Module C:\Tools\Azure\MicroBurst\MicroBurst.psm1
 }
 
 function Install-Python3 {
@@ -31,12 +42,14 @@ function Install-O365creeper {
 }
 
 $oldExecPolicy = Get-ExecutionPolicy
+$psRepoTrustPolicy = Get-PSRepository -Name PSGallery
+
 try {
 	mkdir temp
 	mkdir C:\Tools\Azure
 
-	$oldExecPolicy = Get-ExecutionPolicy
 	Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+	Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 
 	Install-AADInternals
 	Install-Python2
@@ -45,4 +58,5 @@ try {
 } catch {
 	Remove-Item temp
 	Set-ExecutionPolicy -ExecutionPolicy $oldExecPolicy -Scope Process
+	Set-PSRepository -Name PSGallery -InstallationPolicy $psRepoTrustPolicy.InstallationPolicy
 }
