@@ -26,6 +26,7 @@ function Install-Python2 {
 
 
 function Install-O365creeper {
+	C:\python27\python.exe -m pip install requests
 	Invoke-WebRequest https://raw.githubusercontent.com/LMGsec/o365creeper/master/o365creeper.py -OutFile C:\Tools\Azure\o365creeper.py
 }
 
@@ -38,7 +39,8 @@ try {
 	Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 
 	Install-AADInternals
-	Install-Python3
+	Install-Python2
+	# Install-Python3
 	Install-O365creeper
 } catch {
 	Remove-Item temp
