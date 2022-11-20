@@ -4,15 +4,14 @@ function Install-AADInternals {
 
 function Install-MicroBurst {
 	Invoke-WebRequest https://github.com/NetSPI/MicroBurst/archive/refs/heads/master.zip -OutFile temp\MicroBurst-master.zip
-	Expand-Archive temp\MicroBurst-master.zip -DestinationPath C:\Tools\Azure
-	Move-Item C:\Tools\Azure\MicroBurst-master C:\Tools\Azure\MicroBurst
+	Expand-Archive temp\MicroBurst-master.zip -DestinationPath C:\CloudAK\Tools\Azure
+	Move-Item C:\CloudAK\Tools\Azure\MicroBurst-master C:\CloudAK\Tools\Azure\MicroBurst
 
 	Install-Module Az -Scope CurrentUser -RequiredVersion 9.1.1
 	Install-Module AzureAD -Scope CurrentUser -RequiredVersion 2.0.2.140
-	Install-Module AzureRM -Scope CurrentUser -RequiredVersion 6.13.2
 	Install-Module MSOnline -Scope CurrentUser -RequiredVersion 1.1.183.66
 
-	Import-Module C:\Tools\Azure\MicroBurst\MicroBurst.psm1
+	Import-Module C:\CloudAK\Tools\Azure\MicroBurst\MicroBurst.psm1
 }
 
 function Install-Python3 {
@@ -29,7 +28,7 @@ function Install-Python2 {
 	cd temp
 	Invoke-WebRequest https://www.python.org/ftp/python/2.7.18/python-2.7.18.amd64.msi -OutFile python-2.7.18.amd64.msi
 	
-	$p = Start-Process msiexec.exe -ArgumentList "/i python-2.7.18.amd64.msi ALLUSERS=0 TARGETDIR=c:\\python27 ADDLOCAL=DefaultFeature,Extensions,Tools,PrependPath,pip_feature" -PassThru
+	$p = Start-Process msiexec.exe -ArgumentList "/i python-2.7.18.amd64.msi ALLUSERS=0 TARGETDIR=c:\python27 ADDLOCAL=DefaultFeature,Extensions,Tools,PrependPath,pip_feature" -PassThru
 	Wait-Process -Id $p.Id
 
 	cd ../
@@ -38,7 +37,7 @@ function Install-Python2 {
 
 function Install-O365creeper {
 	C:\python27\python.exe -m pip install requests
-	Invoke-WebRequest https://raw.githubusercontent.com/LMGsec/o365creeper/master/o365creeper.py -OutFile C:\Tools\Azure\o365creeper.py
+	Invoke-WebRequest https://raw.githubusercontent.com/LMGsec/o365creeper/master/o365creeper.py -OutFile C:\CloudAK\Tools\Azure\o365creeper.py
 }
 
 $oldExecPolicy = Get-ExecutionPolicy
@@ -46,7 +45,7 @@ $psRepoTrustPolicy = Get-PSRepository -Name PSGallery
 
 try {
 	mkdir temp
-	mkdir C:\Tools\Azure
+	mkdir C:\CloudAK\Tools\Azure
 
 	Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 	Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
@@ -55,7 +54,8 @@ try {
 	Install-Python2
 	# Install-Python3
 	Install-O365creeper
-} catch {
+	Install-MicroBurst
+} finally {
 	Remove-Item temp
 	Set-ExecutionPolicy -ExecutionPolicy $oldExecPolicy -Scope Process
 	Set-PSRepository -Name PSGallery -InstallationPolicy $psRepoTrustPolicy.InstallationPolicy
