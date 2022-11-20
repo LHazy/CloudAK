@@ -2,6 +2,10 @@ function Install-AADInternals {
 	Install-Module AADInternals -Scope CurrentUser -RequiredVersion 0.7.8
 }
 
+function Install-MSOLSpray {
+	Invoke-WebRequest https://raw.githubusercontent.com/dafthack/MSOLSpray/master/MSOLSpray.ps1 -Outfile c:\CloudAK\Tools\Azure\MSOLSpray.ps1
+}
+
 function Install-MicroBurst {
 	Invoke-WebRequest https://github.com/NetSPI/MicroBurst/archive/refs/heads/master.zip -OutFile temp\MicroBurst-master.zip
 	Expand-Archive temp\MicroBurst-master.zip -DestinationPath C:\CloudAK\Tools\Azure
